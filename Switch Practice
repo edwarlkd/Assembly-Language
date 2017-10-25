@@ -1,0 +1,305 @@
+; use lookup table instead of .IF
+
+INCLUDE Irvine32.inc
+
+.data
+
+str BYTE "Choose your favorite color from the menu", 0Ah, 0Dh
+    BYTE " 1 - Red ", 0Ah, 0Dh
+    BYTE " 2 - Green ", 0Ah, 0Dh
+    BYTE " 3 - Blue ", 0Ah, 0Dh
+    BYTE " 4 - VIOLET ", 0Ah, 0Dh
+    BYTE " 5 - ExitProgram ", 0AH, 0DH, 0
+
+msgRED BYTE "You are sensitive type", 0
+msgGREEN BYTE "You are relaxing type", 0
+msgBLUE BYTE "You are energetic type", 0
+msgVIOLET BYTE "You are angry type", 0
+
+caseTable BYTE '1'
+	DWORD REDD
+EntrySize = ($ - caseTable)
+	BYTE '2'
+	DWORD GREENN
+	BYTE '3'
+	DWORD BLUEE
+	BYTE '4'
+	DWORD VIOLETT
+	BYTE '5'
+	DWORD ExitProgram
+	numberOfEntries = ($ - caseTable) / EntrySize
+
+
+.code
+main PROC
+	call clrscr
+
+	Menu:
+
+	MOV edx, OFFSET str
+	call writestring
+	Call crlf
+
+	L1:
+	  call readchar
+	  cmp AL, 5
+
+	  ja L1			; sent back to L1 to get another char.
+	  cmp AL, 1
+	  jb L1
+
+	  call chooseProcedure
+	  jc quit	; if choice == 5, quit the loop
+	  call crlf
+
+	  call writestring
+	  call crlf
+
+	  jmp Menu
+
+	  quit:
+		exit
+
+main ENDP
+
+
+;-------------------------------------------
+chooseProcedure PROC
+; selects a procedure from the case table
+; Receives AL = the number of procedures
+; Returns nothing
+;-------------------------------------------
+
+PUSH EBX
+PUSH ECX
+
+MOV EBX, OFFSET CaseTable	; EBX is a pointer to the case table
+MOV ECX, numberOfEntries	; loop counter
+
+L1: 
+	cmp AL, [EBX]		; Is match found?
+	jne L2			; 'jump if not equal' to L2
+	Call NEAR PTR [EBX + 1] ; if matching found, just call the case.
+	jmp L3			; Done
+
+L2:
+	Add EBX, EntrySize	; (if the match wasn't found), it increments EBX for compare
+	Loop L1			
+
+L3: 
+	POP ECX
+	POP EBX
+	ret
+chooseProcedure ENDP
+
+;----------------------------
+REDD PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgRED
+ret
+REDD ENDP
+
+;----------------------------
+GREENN PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFET msgGREEN
+ret
+GREENN ENDP
+
+;----------------------------
+BLUEE PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgBLUE
+ret
+BLUEE ENDP
+
+;----------------------------
+VIOLETT PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgVIOLET
+ret
+VIOLETT ENDP
+
+;----------------------------
+ExitProblem PROC
+; Recieves: nothing
+; returns: sets the carry flag
+;-----------------------------
+
+STC		; set the carry flag
+ret
+
+ExitProblem ENDP
+
+
+
+END main
+
+
+=
+==================================================================
+
+==================================================================
+
+==================================================================
+=================================================================
+
+; use lookup table instead of .IF
+
+INCLUDE Irvine32.in
+
+.data
+
+str BYTE "Choose your favorite color from the menu"
+    BYTE " 1  AND", 0dh, 0ah
+    BYTE " 2  Green ", 0dh, 0ah
+    BYTE " 3  Blue ", 0dh, 0ah
+    BYTE " 4  VIOLET ", 0dh, 0ah
+    BYTE " 5  ExitProgram ", 0
+
+msgRED BYTE "You are sensitive type", 0
+msgGREEN BYTE "You are relaxing type", 0
+msgBLUE BYTE "You are energetic type", 0
+msgVIOLET BYTE "You are angry type", 0
+
+caseTable BYTE '1'
+	DWORD REDD
+EntrySize = ($ - caseTable)
+	BYTE '2'
+	DWORD GREENN
+	BYTE '3'
+	DWORD BLUEE
+	BYTE '4'
+	DWORD VIOLETT
+	BYTE '5'
+	DWORD ExitProblem
+	numberOfEntries = ($ - caseTable) / EntrySize
+
+
+.code
+main PROC
+	call clrscr
+
+	Menu:
+
+	MOV EDX, OFFSET str
+	Call writestring
+	Call crlf
+
+	L1:
+	  call readchar
+	  cmp AL, 5
+
+	  ja L1			; sent back to L1 to get another char.
+	  cmp AL, 1
+	  jb L1
+
+	  call chooseProcedure
+	  jc quit	; if choice == 5, quit the loop
+	  call crlf
+
+	  call writestring
+	  call crlf
+
+	  jmp Menu
+
+	  quit:
+		exit
+
+main ENDP
+
+
+;-------------------------------------------
+chooseProcedure PROC
+; selects a procedure from the case table
+; Receives AL = the number of procedures
+; Returns nothing
+;-------------------------------------------
+
+PUSH EBX
+PUSH ECX
+
+MOV EBX, OFFSET CaseTable	; EBX is a pointer to the case table
+MOV ECX, numberOfEntries	; loop counter
+
+L1: 
+	cmp AL, [EBX]		; Is match found?
+	jne L2			; 'jump if not equal' to L2
+	Call NEAR PTR [EBX + 1] ; if matching found, just call the case.
+	jmp L3			; Done
+
+L2:
+	Add EBX, EntrySize	; (if the match wasn't found), it increments EBX for compare
+	Loop L1			
+
+L3: 
+	POP ECX
+	POP EBX
+	ret
+chooseProcedure ENDP
+
+;----------------------------
+REDD PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgRED
+ret
+REDD ENDP
+
+;----------------------------
+GREENN PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgGREEN
+ret
+GREENN ENDP
+
+;----------------------------
+BLUEE PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+
+MOV EDX, OFFSET msgBLUE
+ret
+BLUEE ENDP
+
+;----------------------------
+VIOLETT PROC
+; Recieves: nothing
+; returns: edx = offset of the message to be displayerd
+;-----------------------------
+MOV EDX, OFFSET msgVIOLET
+ret
+VIOLETT ENDP
+
+;----------------------------
+ExitProblem PROC
+; Recieves: nothing
+; returns: sets the carry flag
+;-----------------------------
+STC		; set the carry flag
+ret
+ExitProblem ENDP
+
+
+
+END main
+
+
